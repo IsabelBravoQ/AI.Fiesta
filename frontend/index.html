@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>AI.Fiesta — Organizador de fiestas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Inter + Tailwind -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root{
+      --accent:#2563eb;                 /* azul sobrio para detalles */
+      --brand-pink:#ff4d6d;             /* colores del logo */
+      --brand-violet:#8b5cf6;
+      --brand-teal:#06b6d4;             /* por si luego quieres usar turquesa */
+      --bg:#0b0e14;                     /* casi negro */
+    }
+
+    body{ font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; }
+
+    /* Fondo general oscuro */
+    body{ background:var(--bg); color:#e5e7eb; }
+
+    /* Tarjetas blancas sobre fondo oscuro */
+    .card{
+      border:1px solid #e5e7eb;
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 8px 24px rgba(0,0,0,.08);
+    }
+
+    /* Botones base */
+    .btn{ border-radius:12px; padding:.65rem 1rem; font-weight:700; transition:transform .08s ease, filter .08s ease; }
+    .btn:active{ transform:translateY(0); }
+    .accent-ring:focus{ outline:none; box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+
+    /* Botón principal: degradado rosa -> violeta */
+    .btn-brand{
+      background:linear-gradient(135deg, var(--brand-pink), var(--brand-violet));
+      color:#fff;
+      border:0;
+      box-shadow:0 6px 18px rgba(139,92,246,.25);
+    }
+    .btn-brand:hover{ filter:brightness(.96); transform:translateY(-1px); }
+
+    /* Botón secundario: borde degradado */
+    .btn-outline-brand{
+      color:#111827;
+      border:2px solid transparent;
+      background-image:
+        linear-gradient(#ffffff, #ffffff),
+        linear-gradient(135deg, var(--brand-pink), var(--brand-violet));
+      background-origin:border-box;
+      background-clip:padding-box, border-box;
+    }
+    .btn-outline-brand:hover{
+      background-image:
+        linear-gradient(#f8fafc, #f8fafc),
+        linear-gradient(135deg, var(--brand-pink), var(--brand-violet));
+      transform:translateY(-1px);
+    }
+
+    /* HERO con banner y glow suave */
+    .hero-wrap{
+      background:
+        radial-gradient(1200px 600px at 50% -20%, rgba(139,92,246,.08), transparent 60%),
+        #0f172a;
+      color:#e5e7eb;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    #brandBanner{
+      image-rendering:-webkit-optimize-contrast;
+      filter:drop-shadow(0 10px 24px rgba(0,0,0,.45));
+    }
+
+    /* Más contraste en el formulario (tarjeta blanca) */
+    #fiestaForm label{ color:#0f172a !important; font-weight:600; }
+    #fiestaForm input, #fiestaForm select, #fiestaForm textarea{
+      color:#0f172a !important; background:#fff;
+      border:1px solid #d1d5db !important; border-radius:10px; padding:.5rem .75rem;
+    }
+    #fiestaForm input::placeholder, #fiestaForm textarea::placeholder{ color:#9ca3af !important; }
+  </style>
+</head>
+
+<body>
+  <!-- HERO -->
+  <header class="hero-wrap relative overflow-hidden">
+    <div class="py-10 sm:py-12 text-center">
+      <!-- Pon tu banner en la misma carpeta que este HTML -->
+      <img src="banner.png" alt="AI.Fiesta" class="h-28 sm:h-36 md:h-44 w-auto mx-auto select-none" id="brandBanner">
+      <p id="heroTheme" class="text-sm text-slate-300 mt-10">Elige una temática y genera el plan.</p>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 -mt-7 relative">
+    <!-- FORMULARIO -->
+    <section class="card p-6">
+      <form id="fiestaForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm mb-1">Tema de la fiesta</label>
+          <input id="p_tema" name="p_tema" class="w-full accent-ring" placeholder="Años 80, Piratas, Halloween..." />
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Edad de los invitados</label>
+          <input id="edad_invitados" name="edad_invitados" class="w-full accent-ring" placeholder="Niños, Adolescentes, Adultos" />
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Número de invitados</label>
+          <input id="numero_invitados" type="number" min="1" name="numero_invitados" class="w-full accent-ring" placeholder="Ej. 12" />
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Presupuesto</label>
+          <select id="presupuesto" name="presupuesto" class="w-full bg-white accent-ring">
+            <option value="">Selecciona…</option>
+            <option>Bajo</option><option>Medio</option><option>Alto</option><option>Premium</option>
+          </select>
+        </div>
+        <div class="sm:col-span-2 lg:col-span-2">
+          <label class="block text-sm mb-1">Lugar</label>
+          <input id="lugar" name="lugar" class="w-full accent-ring" placeholder="Piso, jardín, pub, finca con piscina…" />
+        </div>
+        <div class="flex items-center gap-3 sm:col-span-2 lg:col-span-1">
+          <button id="btnGenerar" class="btn btn-brand" type="submit">Generar plan</button>
+          <button id="btnAleatorio" type="button" class="btn btn-outline-brand">Idea aleatoria</button>
+        </div>
+      </form>
+
+      <div id="status" class="mt-3 hidden items-center gap-2 text-sm text-gray-600">
+        <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" opacity=".2"/><path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" stroke-width="4"/></svg>
+        <span>Generando plan…</span>
+      </div>
+      <p id="error" class="mt-3 text-sm text-red-500 hidden"></p>
+    </section>
+
+    <!-- RESULTADOS -->
+    <section id="resultado" class="mt-8 space-y-4"></section>
+
+    <footer class="py-12 text-center text-sm text-gray-400">
+      © AI.Fiesta — Demo académica by Isabel Bravo
+    </footer>
+  </main>
+
+  <script>
+    // ===== Config =====
+    const API_BASE = (location.port === '5500') ? 'http://127.0.0.1:5000' : window.location.origin;
+    const enableConfetti = true;
+
+    // ===== Temas (color + posible foto de fondo) =====
+    const THEME_PRESETS = [
+      {match:/80|ochent/i,   color:'#1d4ed8', photo:'80s neon party'},
+      {match:/pirat/i,       color:'#0ea5e9', photo:'pirate party'},
+      {match:/hallow|terror/i,color:'#b45309', photo:'halloween party'},
+      {match:/navid|xmas/i,  color:'#2563eb', photo:'christmas party'},
+      {match:/tropic|verano|hawai/i, color:'#059669', photo:'tropical party'},
+    ];
+    function pickTheme(name=''){
+      return THEME_PRESETS.find(t=>t.match.test(name)) || {color:'#2563eb', photo:'party lights'};
+    }
+    function applyTheme(name){
+      const {color, photo} = pickTheme(name);
+      document.documentElement.style.setProperty('--accent', color);
+      const heroImg = document.getElementById('heroImg'); // opcional
+      if (heroImg) heroImg.style.backgroundImage = `url('https://source.unsplash.com/1600x600/?${encodeURIComponent(photo)}')`;
+      document.getElementById('heroTheme').textContent = name ? `Temática: ${name}` : 'Elige una temática y genera el plan.';
+    }
+
+    // ===== Utils =====
+    function showStatus(show, err=""){
+      document.getElementById('status').classList.toggle('hidden', !show && !err);
+      const e = document.getElementById('error');
+      e.classList.toggle('hidden', !err);
+      e.textContent = err || "";
+    }
+    function el(tag, attrs={}, children=[]){
+      const n = document.createElement(tag);
+      Object.entries(attrs).forEach(([k,v])=> k==='class'? n.className=v : n.setAttribute(k,v));
+      (Array.isArray(children)?children:[children]).forEach(c=> n.appendChild(typeof c==="string"?document.createTextNode(c):c));
+      return n;
+    }
+    function renderCard({title, icon, items}){
+      if(!items?.length) return null;
+      return el('div',{class:'card p-5'},[
+        el('div',{class:'flex items-center gap-2 mb-3 text-slate-900'},[
+          el('span',{class:'text-xl', style:`color: var(--accent)`},icon),
+          el('h3',{class:'font-semibold'},title)
+        ]),
+        el('ul',{class:'space-y-1 list-disc ml-5 text-gray-700'},items.map(x=>el('li',{},x)))
+      ]);
+    }
+
+    // ===== API =====
+    async function postFiesta(payload){
+      const res = await fetch(`${API_BASE}/fiestas`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      const text = await res.text();
+      let data; try{ data = JSON.parse(text); } catch{ throw new Error(`Respuesta no JSON (${res.status})`); }
+      if(!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      return data.plan ?? data.fiesta ?? {};
+    }
+
+    // ===== Render =====
+    function renderPlan(plan){
+      const cont = document.getElementById('resultado');
+      cont.innerHTML = '';
+
+      applyTheme(plan['tema'] || '');
+
+      const header = el('div',{class:'card p-5 flex items-center justify-between'},[
+        el('div',{class:'text-slate-900'},[
+          el('div',{class:'text-xs text-gray-500 mb-1'},'Plan generado'),
+          el('h2',{class:'text-xl font-bold tracking-tight'}, plan['tema'] || 'Fiesta temática')
+        ]),
+        el('div',{class:'border rounded-md px-2 py-1 text-sm text-slate-700'},'Sugerencias IA')
+      ]);
+      cont.appendChild(header);
+
+      const grid = el('div',{class:'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2'});
+      grid.appendChild(renderCard({title:'Música',     icon:'🎵', items:plan['música']})      || el('div'));
+      grid.appendChild(renderCard({title:'Decoración', icon:'🎈', items:plan['decoración']})  || el('div'));
+      grid.appendChild(renderCard({title:'Juegos',     icon:'🎯', items:plan['juegos']})      || el('div'));
+      grid.appendChild(renderCard({title:'Comida',     icon:'🍽️', items:plan['comida']})      || el('div'));
+      grid.appendChild(renderCard({title:'Bebidas',    icon:'🥤', items:plan['bebidas']})     || el('div'));
+      cont.appendChild(grid);
+    }
+
+    // ===== Eventos =====
+    function randomIdea(){
+      const temas   = ['Años 80','Piratas','Halloween','Tropical','Navidad','Futurista','Casino','Fiesta blanca','Superhéroes','Star Wars','Harry Potter','Retro Gamer','Hip-hop 90s','Rock 70s','Indie Festival','Eurovision','Mundial','Oktoberfest','Mexicana','Italiana','Japonesa','K-pop','Bollywood','Ibiza chill','Glitter & Glow','Máscaras venecianas','Murder Mystery','Disfraces','Tarde de té','Picnic boho','BBQ americana','Pool party','Pijama party','Karaoke night','Juegos de mesa','Cine clásico','Oscars','Ciencia y Lab','Space Party','Eco-friendly','Pet-friendly','Artes & Craft'];
+      const edades  = ['Peques (6-9)','Niños (10-12)','Adolescentes (13-17)','Jóvenes (18-25)','Adultos (25+)','Mixto/Familias'];
+      const presup  = ['Bajo','Medio','Alto','Premium'];
+      const lugares = ['piso','jardín','terraza','azotea','salón comunitario','parque','playa','chalet','piscina','local alquilado','oficina','colegio','camping'];
+
+      p_tema.value = temas[Math.floor(Math.random()*temas.length)];
+      edad_invitados.value = edades[Math.floor(Math.random()*edades.length)];
+      numero_invitados.value = Math.floor(Math.random()*25)+6;
+      presupuesto.value = presup[Math.floor(Math.random()*presup.length)];
+      lugar.value = lugares[Math.floor(Math.random()*lugares.length)];
+      applyTheme(p_tema.value);
+    }
+
+    document.getElementById('btnAleatorio').addEventListener('click', randomIdea);
+    const p_tema = document.getElementById('p_tema');
+    const edad_invitados = document.getElementById('edad_invitados');
+    const numero_invitados = document.getElementById('numero_invitados');
+    const presupuesto = document.getElementById('presupuesto');
+    const lugar = document.getElementById('lugar');
+
+    p_tema.addEventListener('input', ()=> applyTheme(p_tema.value || '') );
+
+    document.getElementById('fiestaForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      showStatus(true,''); document.getElementById('btnGenerar').disabled = true;
+
+      const payload = {
+        p_tema: p_tema.value.trim(),
+        edad_invitados: edad_invitados.value.trim(),
+        numero_invitados: Number(numero_invitados.value || 0),
+        presupuesto: presupuesto.value.trim(),
+        lugar: lugar.value.trim()
+      };
+
+      try{
+        const plan = await postFiesta(payload);
+        renderPlan(plan);
+        showStatus(false,'');
+        if (enableConfetti) confetti({ spread: 60, particleCount: 100, origin: { y: .2 } });
+      }catch(err){
+        console.error(err);
+        showStatus(false, err.message || 'Ha ocurrido un error');
+      }finally{
+        document.getElementById('btnGenerar').disabled = false;
+      }
+    });
+
+    // Inicial
+    applyTheme('');
+  </script>
+</body>
+</html>
