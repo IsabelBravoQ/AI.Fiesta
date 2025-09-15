@@ -31,30 +31,38 @@ Combina un **backend en Flask**, conexión con **Groq LLM** y **PostgreSQL en AW
 
 ## Estructura del proyecto  
 
+## 📂 Estructura del proyecto  
+
+```bash
 AI.Fiesta/
 │
-├── app/ # Archivo principal Flask (API)
-│ └── app.py
+├── app/                 # Archivo principal Flask (API)
+│   └── app.py
 │
-├── frontend/ # Interfaz web (HTML, CSS, JS)
-│ └── index.html
+├── frontend/            # Interfaz web (HTML, CSS, JS)
+│   └── index.html
 │
-├── funciones/ # Funciones de conexión con LLM y BBDD
-│ └── ...
+├── funciones/           # Funciones de conexión con LLM y BBDD
+│   └── ...
 │
-├── variables/ # Variables globales del proyecto
-│ └── ...
+├── variables/           # Variables globales del proyecto
+│   └── ...
 │
-├── test/ # Pruebas unitarias con pytest
-│ └── test.py
+├── test/                # Pruebas unitarias con pytest
+│   └── test.py
 │
-├── imagenes/ # Imágenes y logos
-│ └── logo.png
+├── imagenes/            # Imágenes y logos
+│   └── logo.png
 │
-├── Dockerfile # Configuración para contenedor Docker
-├── requirements.txt # Dependencias del proyecto
-├── .env (local) # Variables sensibles
-└── README.md # Este archivo
+├── Dockerfile           # Configuración para contenedor Docker
+├── requirements.txt     # Dependencias del proyecto
+├── .env (local)         # Variables sensibles
+└── README.md            # Este archivo
+
+
+
+![Logo](imagenes/esquema_DOC.png)
+
 
 
 ## Posibles mejoras futuras
