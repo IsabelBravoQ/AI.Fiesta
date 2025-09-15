@@ -31,8 +31,6 @@ Combina un **backend en Flask**, conexión con **Groq LLM** y **PostgreSQL en AW
 
 ## Estructura del proyecto  
 
-## 📂 Estructura del proyecto  
-
 ```bash
 AI.Fiesta/
 │
@@ -57,7 +55,7 @@ AI.Fiesta/
 │
 └── README.md            # Este archivo
 
-
+```
 
 ![Esquema](imagenes/esquemaDOC.png)
 
