@@ -10,7 +10,7 @@ Combina un **backend en Flask**, conexión con **Groq LLM** y **PostgreSQL en AW
 
 ## ¿Qué puedes hacer con AI.Fiesta?  
 
-✅ Crear planes completos de fiestas temáticas mediante chat con un asistente IA.  
+✅ Crear planes completos de fiestas temáticas con ayuda un asistente IA.  
 ✅ Generar ideas aleatorias con un solo clic.  
 ✅ Guardar automáticamente las consultas en una **base de datos en AWS (PostgreSQL)**.  
 ✅ Consultar y visualizar los resultados desde el **frontend web** en forma de tarjetas.  
