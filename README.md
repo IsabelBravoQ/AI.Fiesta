@@ -36,24 +36,24 @@ AI.Fiesta/
 │
 ├── app.py                 # Archivo principal Flask (API)
 │  
-├── frontend/            # Interfaz web (HTML, CSS, JS)
+├── frontend/              # Interfaz web (HTML, CSS, JS)
 │   └── index.html
 │
-├── funciones.py          # Funciones de conexión con LLM y BBDD
+├── funciones.py           # Funciones de conexión con LLM y BBDD
 │ 
-├── variables.py          # Variables globales del proyecto  
+├── variables.py           # Variables globales del proyecto  
 │
 ├── test.py                # Pruebas unitarias con pytest
 │ 
-├── imagenes/            # Imágenes y logos
+├── imagenes/              # Imágenes y logos
 │ 
-├── Dockerfile           # Configuración para contenedor Docker
+├── Dockerfile             # Configuración para contenedor Docker
 │
-├── requirements.txt     # Dependencias del proyecto
+├── requirements.txt       # Dependencias del proyecto
 │
-├── .env (local)         # Variables sensibles
+├── .env (local)           # Variables sensibles
 │
-└── README.md            # Este archivo
+└── README.md              # Este archivo
 
 ```
 
